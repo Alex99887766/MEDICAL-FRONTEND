@@ -13,34 +13,53 @@ import {
   FormControl,
   FormLabel,
   Grid,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/api'; // Імпортуємо наш клієнт
 
 export default function Register() {
   const navigate = useNavigate();
 
-  // Стани для зберігання даних форми
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('1'); // 1 - Пацієнт (за замовчуванням), 2 - Лікар
+  const [role, setRole] = useState('1');
 
-  // Функція обробки відправки форми
-  const handleRegister = (e) => {
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleRegister = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    // Поки бекенд не підключено, виводимо дані в консоль
-    console.log('Дані для реєстрації:', {
-      firstName,
-      lastName,
-      email,
-      password,
-      role_id: parseInt(role),
-    });
+    try {
+      const payload = {
+        first_name: firstName,
+        last_name: lastName,
+        email: email,
+        password: password,
+        role_id: parseInt(role),
+      };
 
-    // Імітуємо успішну реєстрацію та перекидаємо в кабінет
-    navigate('/dashboard');
+      // Відправляємо дані на бекенд у форматі JSON
+      await api.post('/api/auth/register', payload);
+
+      // Після успішної реєстрації перекидаємо на сторінку входу
+      navigate('/login');
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.detail ||
+          err.response?.data?.message ||
+          'Помилка реєстрації. Перевірте дані або спробуйте інший email.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -70,15 +89,21 @@ export default function Register() {
             </Typography>
           </Box>
 
+          {error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
+
           <form onSubmit={handleRegister}>
             <Grid container spacing={2}>
-              {/* Ім'я та Прізвище */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   label="Ім'я"
                   fullWidth
                   required
                   value={firstName}
+                  disabled={loading}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
               </Grid>
@@ -88,11 +113,11 @@ export default function Register() {
                   fullWidth
                   required
                   value={lastName}
+                  disabled={loading}
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </Grid>
 
-              {/* Email та Пароль */}
               <Grid item xs={12}>
                 <TextField
                   label="Електронна пошта"
@@ -100,6 +125,7 @@ export default function Register() {
                   fullWidth
                   required
                   value={email}
+                  disabled={loading}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Grid>
@@ -110,11 +136,11 @@ export default function Register() {
                   fullWidth
                   required
                   value={password}
+                  disabled={loading}
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </Grid>
 
-              {/* Вибір ролі */}
               <Grid item xs={12}>
                 <FormControl component="fieldset" sx={{ mt: 1, width: '100%' }}>
                   <FormLabel
@@ -131,12 +157,12 @@ export default function Register() {
                   >
                     <FormControlLabel
                       value="1"
-                      control={<Radio color="primary" />}
+                      control={<Radio color="primary" disabled={loading} />}
                       label="Я Пацієнт"
                     />
                     <FormControlLabel
                       value="2"
-                      control={<Radio color="primary" />}
+                      control={<Radio color="primary" disabled={loading} />}
                       label="Я Лікар"
                     />
                   </RadioGroup>
@@ -150,19 +176,24 @@ export default function Register() {
               color="primary"
               fullWidth
               size="large"
-              sx={{ mt: 4, mb: 2, borderRadius: 2 }}
+              disabled={loading}
+              sx={{ mt: 4, mb: 2, borderRadius: 2, height: 48 }}
             >
-              Зареєструватися
+              {loading ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                'Зареєструватися'
+              )}
             </Button>
           </form>
 
-          {/* Посилання на вхід */}
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2" color="text.secondary">
               Вже маєте акаунт?{' '}
               <Link
                 component="button"
                 variant="body2"
+                disabled={loading}
                 onClick={() => navigate('/login')}
                 sx={{ fontWeight: 'bold', textDecoration: 'none' }}
               >
@@ -173,6 +204,7 @@ export default function Register() {
             <Button
               variant="text"
               size="small"
+              disabled={loading}
               onClick={() => navigate('/')}
               sx={{ mt: 3, color: 'text.secondary' }}
             >
