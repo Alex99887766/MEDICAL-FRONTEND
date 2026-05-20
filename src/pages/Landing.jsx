@@ -19,6 +19,14 @@ import SecurityIcon from '@mui/icons-material/Security';
 export default function Landing() {
   const navigate = useNavigate();
 
+  // Перевіряємо, чи користувач залогінений
+  const isAuthenticated = !!localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/'); // Оновлюємо сторінку або перекидаємо на головну
+  };
+
   return (
     <Box
       sx={{
@@ -44,17 +52,45 @@ export default function Landing() {
             MedRecords
           </Typography>
           <Stack direction="row" spacing={2}>
-            <Button color="inherit" onClick={() => navigate('/login')}>
-              Увійти
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              disableElevation
-              onClick={() => navigate('/register')}
-            >
-              Реєстрація
-            </Button>
+            {isAuthenticated ? (
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => navigate('/dashboard')}
+                >
+                  Перейти в кабінет
+                </Button>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  size="large"
+                  onClick={handleLogout}
+                >
+                  Вийти
+                </Button>
+              </Box>
+            ) : (
+              <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  size="large"
+                  onClick={() => navigate('/login')}
+                >
+                  Увійти
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => navigate('/register')}
+                >
+                  Зареєструватися
+                </Button>
+              </Box>
+            )}
           </Stack>
         </Toolbar>
       </AppBar>

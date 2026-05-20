@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -8,48 +9,34 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Chip,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
-
-// Тимчасові фейкові дані (Mock Data)
-const mockRecords = [
-  {
-    id: 1,
-    date: '2026-05-15',
-    diagnosis: 'Гострий бронхіт',
-    doctor: 'Іванов О.П.',
-    status: 'Вилікувано',
-  },
-  {
-    id: 2,
-    date: '2026-05-18',
-    diagnosis: 'Мігрень',
-    doctor: 'Сидоренко В.М.',
-    status: 'В процесі',
-  },
-  {
-    id: 3,
-    date: '2026-05-20',
-    diagnosis: 'Плановий огляд',
-    doctor: 'Коваленко І.С.',
-    status: 'Завершено',
-  },
-];
-
-// Функція для підбору кольору статусу
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'Вилікувано':
-    case 'Завершено':
-      return 'success';
-    case 'В процесі':
-      return 'warning';
-    default:
-      return 'default';
-  }
-};
+import api from '../api/api';
 
 export default function History() {
+  const [cases, setCases] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Завантажуємо дані при першому рендері компонента
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const response = await api.get('/api/records/my-history');
+        // Бекенд має повернути масив об'єктів MedicalCaseResponse
+        setCases(response.data);
+      } catch (err) {
+        console.error(err);
+        setError("Не вдалося завантажити історію хвороб. Перевірте з'єднання.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHistory();
+  }, []);
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
@@ -59,49 +46,67 @@ export default function History() {
         Тут відображаються всі ваші медичні записи та діагнози.
       </Typography>
 
-      <TableContainer
-        component={Paper}
-        sx={{ borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
-      >
-        <Table sx={{ minWidth: 650 }} aria-label="medical history table">
-          {/* Заголовок таблиці */}
-          <TableHead sx={{ bgcolor: '#f1f5f9' }}>
-            <TableRow>
-              <TableCell sx={{ fontWeight: 'bold' }}>Дата</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Діагноз</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Лікуючий лікар</TableCell>
-              <TableCell sx={{ fontWeight: 'bold' }}>Статус</TableCell>
-            </TableRow>
-          </TableHead>
+      {/* Обробка стану помилки */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 3 }}>
+          {error}
+        </Alert>
+      )}
 
-          {/* Тіло таблиці */}
-          <TableBody>
-            {mockRecords.map((record) => (
-              <TableRow
-                key={record.id}
-                sx={{
-                  '&:last-child td, &:last-child th': { border: 0 },
-                  '&:hover': { bgcolor: '#f8fafc' },
-                }}
-              >
-                <TableCell component="th" scope="row">
-                  {record.date}
-                </TableCell>
-                <TableCell>{record.diagnosis}</TableCell>
-                <TableCell>{record.doctor}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={record.status}
-                    color={getStatusColor(record.status)}
-                    size="small"
-                    variant="outlined"
-                  />
-                </TableCell>
+      {/* Обробка стану завантаження */}
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <TableContainer
+          component={Paper}
+          sx={{ borderRadius: 2, boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }}
+        >
+          <Table sx={{ minWidth: 650 }} aria-label="medical history table">
+            <TableHead sx={{ bgcolor: '#f1f5f9' }}>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 'bold' }}>Дата створення</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Назва (Діагноз)</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Опис</TableCell>
+                <TableCell sx={{ fontWeight: 'bold' }}>Призначення</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+
+            <TableBody>
+              {cases.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    align="center"
+                    sx={{ py: 3, color: 'text.secondary' }}
+                  >
+                    У вас поки немає медичних записів.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                cases.map((medicalCase) => (
+                  <TableRow
+                    key={medicalCase.id}
+                    sx={{
+                      '&:last-child td, &:last-child th': { border: 0 },
+                      '&:hover': { bgcolor: '#f8fafc' },
+                    }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {/* Відформатуємо дату, щоб вона виглядала гарно */}
+                      {new Date(medicalCase.created_at).toLocaleDateString('uk-UA')}
+                    </TableCell>
+                    <TableCell fontWeight="medium">{medicalCase.case_name}</TableCell>
+                    <TableCell>{medicalCase.description || '—'}</TableCell>
+                    <TableCell>{medicalCase.treatment || '—'}</TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Box>
   );
 }
