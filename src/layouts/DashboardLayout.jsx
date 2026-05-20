@@ -19,6 +19,8 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import HistoryIcon from '@mui/icons-material/History';
 import SecurityIcon from '@mui/icons-material/Security';
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
+import HomeIcon from '@mui/icons-material/Home';
 
 const drawerWidth = 260;
 
@@ -32,13 +34,17 @@ export default function DashboardLayout() {
   };
 
   const handleLogout = () => {
-    // У майбутньому тут буде очищення токена
-    navigate('/');
+    // Видаляємо токен із пам'яті браузера
+    localStorage.removeItem('token');
+
+    // Перекидаємо на сторінку входу
+    navigate('/login');
   };
 
   // Конфігурація пунктів меню
   const menuItems = [
     { text: 'Головна', icon: <DashboardIcon />, path: '/dashboard' },
+    { text: 'Мій профіль', icon: <PersonIcon />, path: '/dashboard/profile' },
     { text: 'Історія хвороб', icon: <HistoryIcon />, path: '/dashboard/history' },
     { text: 'Журнал безпеки', icon: <SecurityIcon />, path: '/dashboard/security' },
   ];
@@ -75,6 +81,17 @@ export default function DashboardLayout() {
       </List>
       <Divider />
       <List>
+        {/* Нова кнопка "На головну" */}
+        <ListItem disablePadding>
+          <ListItemButton onClick={() => navigate('/')} sx={{ color: 'text.secondary' }}>
+            <ListItemIcon sx={{ color: 'inherit' }}>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary="На головну" />
+          </ListItemButton>
+        </ListItem>
+
+        {/* Існуюча кнопка виходу */}
         <ListItem disablePadding>
           <ListItemButton onClick={handleLogout} sx={{ color: 'error.main' }}>
             <ListItemIcon sx={{ color: 'error.main' }}>
