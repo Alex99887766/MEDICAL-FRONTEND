@@ -1,3 +1,4 @@
+[![Frontend Quality Gate](https://github.com/Alex99887766/MEDICAL-FRONTEND/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/Alex99887766/MEDICAL-FRONTEND/actions/workflows/quality-gate.yml)
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
