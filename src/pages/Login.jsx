@@ -7,25 +7,53 @@ import {
   Button,
   Paper,
   Link,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import api from '../api/api'; // Імпортуємо наш API клієнт
 
 export default function Login() {
   const navigate = useNavigate();
 
-  // Стани для зберігання введених даних
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Функція обробки форми
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
-    // Поки бекенд не підключено, просто виводимо дані в консоль
-    console.log('Спроба входу:', { email, password });
+    try {
+      // Для FastAPI OAuth2 потрібен формат URLSearchParams, а не звичайний об'єкт JSON
+      const formData = new URLSearchParams();
+      formData.append('username', email); // FastAPI обов'язково чекає поле username
+      formData.append('password', password);
 
-    // Імітуємо успішний вхід і перекидаємо в кабінет
-    navigate('/dashboard');
+      // Робимо запит на правильний шлях з префіксом /api/
+      const response = await api.post('/api/auth/login', formData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      });
+
+      // Зберігаємо токен
+      if (response.data.access_token) {
+        localStorage.setItem('token', response.data.access_token);
+      }
+
+      // Перенаправляємо в кабінет
+      navigate('/dashboard');
+    } catch (err) {
+      console.error(err);
+      setError(
+        err.response?.data?.detail || 'Невірний логін або пароль. Спробуйте ще раз.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,7 +67,6 @@ export default function Login() {
     >
       <Container maxWidth="xs">
         <Paper elevation={3} sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
-          {/* Заголовок */}
           <Typography
             variant="h4"
             component="h1"
@@ -53,7 +80,13 @@ export default function Login() {
             Увійдіть до системи MedRecords
           </Typography>
 
-          {/* Форма */}
+          {/* Вивід помилки, якщо вона є */}
+          {error && (
+            <Alert severity="error" sx={{ mb: 2, textAlign: 'left' }}>
+              {error}
+            </Alert>
+          )}
+
           <form onSubmit={handleLogin}>
             <TextField
               label="Електронна пошта"
@@ -62,6 +95,7 @@ export default function Login() {
               required
               margin="normal"
               value={email}
+              disabled={loading}
               onChange={(e) => setEmail(e.target.value)}
             />
 
@@ -72,6 +106,7 @@ export default function Login() {
               required
               margin="normal"
               value={password}
+              disabled={loading}
               onChange={(e) => setPassword(e.target.value)}
             />
 
@@ -81,13 +116,13 @@ export default function Login() {
               color="primary"
               fullWidth
               size="large"
-              sx={{ mt: 3, mb: 2, borderRadius: 2 }}
+              disabled={loading}
+              sx={{ mt: 3, mb: 2, borderRadius: 2, height: 48 }}
             >
-              Увійти
+              {loading ? <CircularProgress size={24} color="inherit" /> : 'Увійти'}
             </Button>
           </form>
 
-          {/* Посилання на реєстрацію */}
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
             Ще немає акаунта?{' '}
             <Link
@@ -104,6 +139,7 @@ export default function Login() {
             variant="text"
             size="small"
             onClick={() => navigate('/')}
+            disabled={loading}
             sx={{ mt: 3, color: 'text.secondary' }}
           >
             ← Повернутися на головну
