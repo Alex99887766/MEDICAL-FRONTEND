@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { 
-  Container, 
-  Box, 
-  Typography, 
-  TextField, 
-  Button, 
+import {
+  Container,
+  Box,
+  Typography,
+  TextField,
+  Button,
   Paper,
   Link,
   Radio,
@@ -12,13 +12,13 @@ import {
   FormControlLabel,
   FormControl,
   FormLabel,
-  Grid
+  Grid,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register() {
   const navigate = useNavigate();
-  
+
   // Стани для зберігання даних форми
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -29,27 +29,40 @@ export default function Register() {
   // Функція обробки відправки форми
   const handleRegister = (e) => {
     e.preventDefault();
-    
+
     // Поки бекенд не підключено, виводимо дані в консоль
-    console.log('Дані для реєстрації:', { 
-      firstName, 
-      lastName, 
-      email, 
-      password, 
-      role_id: parseInt(role) 
+    console.log('Дані для реєстрації:', {
+      firstName,
+      lastName,
+      email,
+      password,
+      role_id: parseInt(role),
     });
-    
+
     // Імітуємо успішну реєстрацію та перекидаємо в кабінет
     navigate('/dashboard');
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', py: 4, bgcolor: '#f8fafc' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        py: 4,
+        bgcolor: '#f8fafc',
+      }}
+    >
       <Container maxWidth="sm">
         <Paper elevation={3} sx={{ p: { xs: 3, md: 5 }, borderRadius: 3 }}>
-          
           <Box sx={{ textAlign: 'center', mb: 3 }}>
-            <Typography variant="h4" component="h1" fontWeight="bold" color="primary" gutterBottom>
+            <Typography
+              variant="h4"
+              component="h1"
+              fontWeight="bold"
+              color="primary"
+              gutterBottom
+            >
               Реєстрація
             </Typography>
             <Typography variant="body2" color="text.secondary">
@@ -104,7 +117,10 @@ export default function Register() {
               {/* Вибір ролі */}
               <Grid item xs={12}>
                 <FormControl component="fieldset" sx={{ mt: 1, width: '100%' }}>
-                  <FormLabel component="legend" sx={{ fontWeight: 'bold', color: 'text.primary', mb: 1 }}>
+                  <FormLabel
+                    component="legend"
+                    sx={{ fontWeight: 'bold', color: 'text.primary', mb: 1 }}
+                  >
                     Оберіть вашу роль:
                   </FormLabel>
                   <RadioGroup
@@ -113,26 +129,26 @@ export default function Register() {
                     onChange={(e) => setRole(e.target.value)}
                     sx={{ justifyContent: 'center' }}
                   >
-                    <FormControlLabel 
-                      value="1" 
-                      control={<Radio color="primary" />} 
-                      label="Я Пацієнт" 
+                    <FormControlLabel
+                      value="1"
+                      control={<Radio color="primary" />}
+                      label="Я Пацієнт"
                     />
-                    <FormControlLabel 
-                      value="2" 
-                      control={<Radio color="primary" />} 
-                      label="Я Лікар" 
+                    <FormControlLabel
+                      value="2"
+                      control={<Radio color="primary" />}
+                      label="Я Лікар"
                     />
                   </RadioGroup>
                 </FormControl>
               </Grid>
             </Grid>
 
-            <Button 
-              type="submit" 
-              variant="contained" 
-              color="primary" 
-              fullWidth 
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
               size="large"
               sx={{ mt: 4, mb: 2, borderRadius: 2 }}
             >
@@ -144,26 +160,25 @@ export default function Register() {
           <Box sx={{ textAlign: 'center', mt: 2 }}>
             <Typography variant="body2" color="text.secondary">
               Вже маєте акаунт?{' '}
-              <Link 
-                component="button" 
-                variant="body2" 
+              <Link
+                component="button"
+                variant="body2"
                 onClick={() => navigate('/login')}
                 sx={{ fontWeight: 'bold', textDecoration: 'none' }}
               >
                 Увійти
               </Link>
             </Typography>
-            
-            <Button 
-              variant="text" 
-              size="small" 
-              onClick={() => navigate('/')} 
+
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => navigate('/')}
               sx={{ mt: 3, color: 'text.secondary' }}
             >
               ← Повернутися на головну
             </Button>
           </Box>
-
         </Paper>
       </Container>
     </Box>

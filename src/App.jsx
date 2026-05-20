@@ -2,12 +2,16 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Імпорт сторінок
-import Landing from './pages/Landing'; 
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
 // Тимчасові компоненти-заглушки для сторінок
-const Dashboard = () => <div style={{ padding: '2rem', textAlign: 'center' }}><h2>Головний кабінет (Пацієнт / Лікар)</h2></div>;
+const Dashboard = () => (
+  <div style={{ padding: '2rem', textAlign: 'center' }}>
+    <h2>Головний кабінет (Пацієнт / Лікар)</h2>
+  </div>
+);
 
 function App() {
   return (
