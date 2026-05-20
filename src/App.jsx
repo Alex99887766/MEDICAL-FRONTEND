@@ -4,28 +4,27 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import DashboardLayout from './layouts/DashboardLayout';
+import DashboardHome from './pages/DashboardHome';
+import History from './pages/History';
+import Security from './pages/Security';
 
-// Тимчасові компоненти-заглушки для сторінок
-const Dashboard = () => (
-  <div style={{ padding: '2rem', textAlign: 'center' }}>
-    <h2>Головний кабінет (Пацієнт / Лікар)</h2>
-  </div>
-);
-
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Відкриті маршрути, доступні всім */}
+        {/* Публічні маршрути */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Захищені маршрути (поки що відкриті для тестування) */}
-        <Route path="/dashboard" element={<Dashboard />} />
+        {/* Захищені маршрути Кабінету */}
+        <Route element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<DashboardHome />} />
+          <Route path="/dashboard/history" element={<History />} />
+          <Route path="/dashboard/security" element={<Security />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
