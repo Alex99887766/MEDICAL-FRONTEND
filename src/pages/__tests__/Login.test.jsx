@@ -1,11 +1,9 @@
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
 import Login from '../Login';
 
 describe('Сторінка Авторизації (Login)', () => {
-
   // ТЕСТ 1: Перевірка візуального відображення базових елементів
   it('рендерить форму авторизації з усіма необхідними полями', () => {
     render(
@@ -16,11 +14,11 @@ describe('Сторінка Авторизації (Login)', () => {
 
     // Перевіряємо наявність заголовка
     expect(screen.getByRole('heading', { name: /вхід/i })).toBeInTheDocument();
-    
+
     // Перевіряємо наявність полів вводу
     expect(screen.getByLabelText(/електронна пошта/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/пароль/i)).toBeInTheDocument();
-    
+
     // Перевіряємо наявність кнопки
     expect(screen.getByRole('button', { name: /^увійти$/i })).toBeInTheDocument();
   });
@@ -57,5 +55,4 @@ describe('Сторінка Авторизації (Login)', () => {
     const registerLink = screen.getByRole('button', { name: /зареєструватися/i });
     expect(registerLink).toBeInTheDocument();
   });
-
 });
