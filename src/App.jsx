@@ -1,12 +1,12 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// Імпортуємо нашу готову головну сторінку
+// Імпорт сторінок
 import Landing from './pages/Landing'; 
+import Login from './pages/Login';
+import Register from './pages/Register';
 
-// Тимчасові компоненти-заглушки для сторінок, які ми створимо пізніше
-const Login = () => <div style={{ padding: '2rem', textAlign: 'center' }}><h2>Сторінка авторизації</h2></div>;
-const Register = () => <div style={{ padding: '2rem', textAlign: 'center' }}><h2>Сторінка реєстрації</h2></div>;
+// Тимчасові компоненти-заглушки для сторінок
 const Dashboard = () => <div style={{ padding: '2rem', textAlign: 'center' }}><h2>Головний кабінет (Пацієнт / Лікар)</h2></div>;
 
 function App() {
