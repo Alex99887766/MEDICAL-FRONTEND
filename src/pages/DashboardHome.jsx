@@ -150,7 +150,7 @@ export default function DashboardHome() {
     if (!window.confirm('Ви впевнені, що хочете видалити цей документ?')) return;
 
     try {
-      await api.delete(`/api/records/records/${fileId}`);
+      await api.delete(`api/records/${fileId}`);
       if (user?.role_id === 1) {
         const historyRes = await api.get('/api/records/my-history');
         setPatientHistory(historyRes.data);
