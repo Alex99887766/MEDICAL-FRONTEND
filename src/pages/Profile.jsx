@@ -175,6 +175,14 @@ export default function Profile() {
         <Divider sx={{ mb: 4 }} />
 
         <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Typography variant="caption" color="text.secondary">
+              Унікальний медичний ID (Передайте лікарю)
+            </Typography>
+            <Typography variant="h6" fontWeight="bold" color="primary.main">
+              #{user?.id || user?.patient_id || '—'}
+            </Typography>
+          </Grid>
           <Grid item xs={12} sm={6}>
             <Typography variant="caption" color="text.secondary">
               Ім'я
