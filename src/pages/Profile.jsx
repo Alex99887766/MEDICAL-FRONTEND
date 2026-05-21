@@ -173,7 +173,7 @@ export default function Profile() {
         </Box>
 
         <Divider sx={{ mb: 4 }} />
-        
+
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <Typography variant="caption" color="text.secondary">
